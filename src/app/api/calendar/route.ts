@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
@@ -19,6 +19,6 @@ export async function GET() {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ error: "Erro ao buscar eventos" }, { status: 500 });
+    return NextResponse.json({error}, { status: 500 });
   }
 }
