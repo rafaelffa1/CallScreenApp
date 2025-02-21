@@ -5,7 +5,7 @@ import { FaUser, FaBell } from "react-icons/fa";
 import { io } from "socket.io-client";
 import { useEffect } from "react";
 
-const socket = io("http://localhost:3001");
+const socket = io("wss://websocket-server-odonto-production.up.railway.app");
 
 interface EventProps {
   title: string;

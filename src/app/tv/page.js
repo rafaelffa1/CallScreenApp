@@ -6,7 +6,7 @@ import Clock from './components/Clock';
 import styles from './styles/tv.module.css';
 import Image from "next/image";
 
-const socket = io("http://localhost:3001"); // Certifique-se que o servidor está rodando
+const socket = io("wss://websocket-server-odonto-production.up.railway.app");
 
 export default function Home() {
   const [nextPatient, setNextPatient] = useState()
