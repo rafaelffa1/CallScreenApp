@@ -1,5 +1,15 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions, type Session } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { JWT } from "next-auth/jwt";
+
+declare module "next-auth" {
+  interface Session {
+    accessToken?: string;
+  }
+  interface JWT {
+    accessToken?: string;
+  }
+}
 
 const handler = NextAuth({
   providers: [
@@ -10,17 +20,17 @@ const handler = NextAuth({
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async session({ session, token }) {
-      session.accessToken = token.accessToken;
-      return session;
-    },
-    async jwt({ token, account }) {
+    async jwt({ token, account }): Promise<JWT> {
       if (account) {
-        token.accessToken = account.access_token; 
+        token.accessToken = account.access_token; // ✅ Adiciona o accessToken no JWT
       }
       return token;
     },
+    async session({ session, token }): Promise<Session> {
+      session.accessToken = token.accessToken as string; // ✅ Agora o TypeScript reconhece o accessToken
+      return session;
+    },
   },
-});
+} as NextAuthOptions);
 
 export { handler as GET, handler as POST };
