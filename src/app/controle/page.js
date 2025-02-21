@@ -1,12 +1,13 @@
 "use client";
 
 import EventList from "./components/EventList";
-import { useEffect, useState } from "react";
+// import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 
 export default function Home2() {
   const { data: session } = useSession();
-  const [events2, setEvents] = useState([]);
+  // const [events2, setEvents] = useState([]);
 
   // useEffect(() => {
   //   fetch("/api/calendar")
@@ -71,7 +72,7 @@ export default function Home2() {
 
   return (
     <div>
-      <img src='logo.png' alt="Logo" />
+      <Image src='logo.png' alt="Logo" />
       <div style={{ display: "flex", alignItems: "flex-start", paddingTop: '2em', justifyContent: "center", height: "100vh", background: "#e3f2fd" }}>
         {buttonGoogle()}
         <EventList events={events} />

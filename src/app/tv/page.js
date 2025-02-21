@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { io } from "socket.io-client";
 import Clock from './components/Clock';
 import styles from './styles/tv.module.css';
+import Image from "next/image";
 
 const socket = io("http://localhost:3001"); // Certifique-se que o servidor está rodando
 
@@ -39,7 +40,7 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <img src='logo.png' alt="Logo" className={styles.logo} />
+        <Image src='logo.png' alt="Logo" className={styles.logo} />
       </header>
 
       <main className={styles.main}>
