@@ -1,8 +1,8 @@
 import { Server } from "socket.io";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
-  if (!(global as any).io) {
+export async function GET(req) {
+  if (!(global).io) {
     const io = new Server(3000, { cors: { origin: "*" } });
 
     io.on("connection", (socket) => {
@@ -14,7 +14,7 @@ export async function GET(req: Request) {
       });
     });
 
-    (global as any).io = io;
+    (global).io = io;
   }
 
   return NextResponse.json({ message: "Socket.io Server is running" });
