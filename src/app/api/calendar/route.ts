@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { Session } from "next-auth";
 
 export async function GET() {
   const session = await getServerSession();
@@ -8,7 +9,8 @@ export async function GET() {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
   
-  const accessToken = (session as any).accessToken; // ✅ Pegamos o accessToken corretamente
+  const typedSession = session as Session & { accessToken?: string };
+  const accessToken = typedSession.accessToken;
   
   if (!accessToken) {
     return NextResponse.json({ error: "Token não encontrado" }, { status: 401 });
