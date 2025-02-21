@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
-  if (!session?.accessToken) {
+  if (!session || !session.accessToken) {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
 
@@ -19,6 +18,7 @@ export async function GET() {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({error}, { status: 500 });
+    console.error("Erro ao buscar eventos:", error);
+    return NextResponse.json({ error: "Erro ao buscar eventos" }, { status: 500 });
   }
 }
