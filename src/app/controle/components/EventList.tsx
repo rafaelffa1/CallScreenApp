@@ -8,7 +8,12 @@ import { useEffect } from "react";
 const socket = io("wss://websocket-server-odonto-production.up.railway.app");
 
 interface EventProps {
-  event: object;
+  id: string;
+  summary: string; // ✅ Adicionado para evitar o erro
+  start: { dateTime?: string }; // Data pode ser opcional
+  end: { dateTime?: string };
+  location?: string;
+  attendees?: { email: string }[];
 }
 
 const EventCard: React.FC<EventProps> = (event) => {
