@@ -26,7 +26,7 @@ export default function Home() {
   const delayedAction = () => {
     setTimeout(() => {
       setNextPatient('')
-    }, 4000);
+    }, 10000);
   }
 
   const speakText = (text) => {
@@ -39,45 +39,37 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
+      {/* Logotipo */}
       <header className={styles.header}>
-        <Image src='logo.png' alt="Logo" className={styles.logo} />
+        <img src="/logo.png" alt="Odonto Fácil" className={styles.logo} />
       </header>
 
+      {/* Relógio no canto superior direito */}
+      <div className={styles.clock}>
+        <Clock />
+      </div>
+
+      {/* Vídeo */}
       <main className={styles.main}>
-        <section className={styles.twoColumnSection}>
-          <div className={styles.column}>
-            <section className={styles.videoSection}>
-              <div className={styles.videoContainer}>
-                <iframe
-                  src="https://www.youtube.com/embed/7RqbDiAQayk?autoplay=1&mute=1"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title="Apresentação em Vídeo"
-                ></iframe>
-              </div>
-            </section>
-          </div>
+        <div className={styles.videoContainer}>
+          <iframe
+            src="https://www.youtube.com/embed/7RqbDiAQayk?autoplay=1&mute=1"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title="Vídeo de Atendimento"
+            className={styles.videoIframe}
+          ></iframe>
+        </div>
 
-          <div className={styles.column}>
-            <div className="text-center mt-4">
-              <div style={{ textAlign: "center", marginTop: "50px" }}>
-                <Clock />
-              </div>
-            </div>
-
-            {
-              nextPatient &&
-              <div className="card text-center mt-10">
-                <div style={{ textAlign: "center", marginTop: "50px" }}>
-                  <h1 style={{ fontSize: '100px' }}>{nextPatient}</h1>
-                </div>
-              </div>
-            }
-
-          </div>
-        </section>
+        {nextPatient && <div className={styles.banner}>🔔 {nextPatient}</div>}
       </main>
+
+      {/* Rodapé */}
+      <footer className={styles.footer}>
+        <p>Odonto Fácil - Atendimento com qualidade</p>
+      </footer>
+
     </div>
   );
 }

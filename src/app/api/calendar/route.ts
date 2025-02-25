@@ -1,28 +1,29 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { Session } from "next-auth";
 
-export async function GET() {
-  const session = await getServerSession();
+export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get("authorization");
 
-  if (!session) {
-    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return NextResponse.json({ error: "Token não enviado" }, { status: 401 });
   }
-  
-  const typedSession = session as Session & { accessToken?: string };
-  const accessToken = typedSession.accessToken;
-  
+
+  const accessToken = authHeader.split(" ")[1];
+
+  console.log("AccessToken recebido na API:", accessToken); // 🔍 Log para depuração
+
   if (!accessToken) {
-    return NextResponse.json({ error: "Token não encontrado" }, { status: 401 });
+    return NextResponse.json({ error: "Token inválido" }, { status: 401 });
   }
-  
+
   const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events`;
-  
+
   try {
     const response = await fetch(url, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-  
+
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
@@ -30,3 +31,5 @@ export async function GET() {
     return NextResponse.json({ error: "Erro ao buscar eventos" }, { status: 500 });
   }
 }
+
+

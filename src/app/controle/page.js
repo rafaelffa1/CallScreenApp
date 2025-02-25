@@ -1,83 +1,91 @@
 "use client";
 
 import EventList from "./components/EventList";
-// import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import styles from "./styles/Home.module.css";
+import { FaSignOutAlt, FaCalendarAlt, FaUser } from "react-icons/fa";
 
 export default function Home2() {
   const { data: session } = useSession();
-  // const [events2, setEvents] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   fetch("/api/calendar")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       if (data.items) {
-  //         setEvents(data.items);
-  //         console.log('====================================');
-  //         console.log(data.items);
-  //         console.log('====================================');
-  //       }
-  //     })
-  //     .catch((err) => console.error("Erro ao buscar eventos:", err));
-  // }, []);
+  const fetchCalendarEvents = async () => {
 
-  const buttonGoogle = () => (
-    <div style={{ textAlign: "center", marginTop: "20px" }}>
-      {!session ? (
-        <>
-          <h1>Faça login com Google</h1>
-          <button onClick={() => signIn("google")}>🔑 Login</button>
-        </>
-      ) : (
-        <>
-          <h1>Bem-vindo, {session.user?.name}!</h1>
-          <button onClick={() => signOut()}>🚪 Sair</button>
-        </>
-      )}
-    </div>
-  )
+    if (!session?.accessToken) {
+      setError("Token não encontrado na sessão.");
+      setLoading(false);
+      return;
+    }
 
-  const events = [
-    {
-      title: "Reunião com Cliente",
-      startTime: "10:00",
-      endTime: "11:00",
-      location: "Google Meet",
-      participants: ["Cliente X", "Theo"],
-    },
-    {
-      title: "Sprint Review",
-      startTime: "14:00",
-      endTime: "15:00",
-      location: "Microsoft Teams",
-      participants: ["Equipe Dev", "PO", "Scrum Master"],
-    },
-    {
-      title: "Planejamento de Produto",
-      startTime: "16:00",
-      endTime: "17:30",
-      location: "Sala 01 - Escritório",
-      participants: ["CEO", "PM", "Designer", "Dev Team"],
-    },
-    {
-      title: "Call com Investidores",
-      startTime: "18:00",
-      endTime: "19:00",
-      location: "Zoom",
-      participants: ["Investidores A", "Financeiro", "CEO"],
-    },
-  ];
+    setError(null);
+    try {
+      const response = await fetch("/api/calendar", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`, // ✅ Passa o token no header
+        },
+      });
+
+      const data = await response.json();
+
+      console.log('====================================');
+      console.log(data);
+      console.log('====================================');
+
+      if (response.ok) {
+        setEvents(data.items || []);
+      } else {
+        setError(data.error || "Erro desconhecido");
+      }
+    } catch (err) {
+      setError("Erro ao buscar eventos");
+      alert(error)
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <div>
-      <Image src='logo.png' alt="Logo" />
-      <div style={{ display: "flex", alignItems: "flex-start", paddingTop: '2em', justifyContent: "center", height: "100vh", background: "#e3f2fd" }}>
-        {buttonGoogle()}
-        <EventList events={events} />
-      </div>
-    </div >
+    <div className={styles.container}>
+      {/* Sidebar */}
+      <aside className={styles.sidebar}>
+        <Image src='/logo.png' alt="Logo" width={200} height={100} />
+        <nav className={styles.menu}>
+          <button className={styles.menuButton} onClick={() => signIn("google")}>
+            <FaUser className={styles.icon} /> Login
+          </button>
+          <button className={styles.menuButton} onClick={fetchCalendarEvents}>
+            <FaCalendarAlt className={styles.icon} /> Buscar Eventos
+          </button>
+          <button className={styles.logoutButton} onClick={() => signOut()}>
+            <FaSignOutAlt className={styles.icon} /> Sair
+          </button>
+        </nav>
+      </aside>
+
+      {/* Conteúdo Principal */}
+      <main className={styles.mainContent}>
+        <header className={styles.header}>
+          <p className={styles.welcome}>Bem-vindo, {session?.user?.name}!</p>
+        </header>
+
+        {loading && <p>🔄 Carregando eventos...</p>}
+        {error && <p style={{ color: "red" }}>❌ Erro: {error}</p>}
+
+        <section className={styles.eventList}>
+          {events.length > 0 ? (
+            <EventList event={events} />
+          ) : (
+            !loading && <p>🚫 Nenhum evento encontrado.</p>
+          )}
+        </section>
+      </main>
+    </div>
   );
 }
 

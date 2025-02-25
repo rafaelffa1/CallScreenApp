@@ -1,5 +1,5 @@
 .listContainer {
-    max-height: 500px; /* Define altura máxima para rolagem */
+    max-height: 700px; /* Define altura máxima para rolagem */
     overflow-y: auto; /* Ativa rolagem */
     padding: 10px;
     border-radius: 10px;

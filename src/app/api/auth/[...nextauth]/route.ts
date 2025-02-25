@@ -16,21 +16,26 @@ const handler = NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          scope: "https://www.googleapis.com/auth/calendar.readonly openid email profile",
+        },
+      },
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async jwt({ token, account }): Promise<JWT> {
+    async jwt({ token, account }) {
       if (account) {
-        token.accessToken = account.access_token; // ✅ Adiciona o accessToken no JWT
+        token.accessToken = account.access_token;
       }
       return token;
     },
-    async session({ session, token }): Promise<Session> {
-      session.accessToken = token.accessToken as string; // ✅ Agora o TypeScript reconhece o accessToken
+    async session({ session, token }) {
+      session.accessToken = token.accessToken as string;
       return session;
     },
   },
-} as NextAuthOptions);
+});
 
 export { handler as GET, handler as POST };

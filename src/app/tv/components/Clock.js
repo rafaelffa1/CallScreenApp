@@ -21,13 +21,12 @@ export default function Clock() {
 
 const styles = {
   clock: {
-    fontSize: "6rem",
+    fontSize: "2rem",
     fontWeight: "bold",
     backgroundColor: "rgb(62 132 197)",
     color: "#fff",
     padding: "10px 20px",
     borderRadius: "10px",
-    display: "inline-block",
     textAlign: "center",
   },
 };

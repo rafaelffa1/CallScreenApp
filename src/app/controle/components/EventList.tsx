@@ -8,14 +8,26 @@ import { useEffect } from "react";
 const socket = io("wss://websocket-server-odonto-production.up.railway.app");
 
 interface EventProps {
-  title: string;
-  startTime: string;
-  endTime: string;
-  location: string;
-  participants: string[];
+  event: Object;
 }
 
-const EventCard: React.FC<EventProps> = ({ title, startTime, endTime, location, participants }) => {
+const EventCard: React.FC<EventProps> = (event) => {
+
+  console.log("Evento recebido:", event); // 🔍 Log para depuração
+
+  if (!event) return <p>🚫 Nenhum evento disponível.</p>;
+
+  
+
+  const title = event?.summary || "Evento sem título";
+  const startTime = event?.start?.dateTime
+    ? new Date(event.start.dateTime).toLocaleString("pt-BR")
+    : "Data não definida";
+  const endTime = event?.end?.dateTime
+    ? new Date(event.end.dateTime).toLocaleString("pt-BR")
+    : "Data não definida";
+  const location = event?.location || "Local não informado";
+  const participants = Array.isArray(event?.attendees) ? event.attendees.map((attendee) => attendee.email) : [];
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -43,11 +55,15 @@ const EventCard: React.FC<EventProps> = ({ title, startTime, endTime, location, 
         <p>📍 <strong>Local:</strong> {location}</p>
         <p>👥 <strong>Participantes:</strong></p>
         <ul className={styles.participantList}>
-          {participants.map((participant, index) => (
-            <li key={index} className={styles.participant}>
-              <FaUser className={styles.icon} /> {participant}
-            </li>
-          ))}
+          {participants.length > 0 ? (
+            participants.map((participant, index) => (
+              <li key={index} className={styles.participant}>
+                <FaUser className={styles.icon} /> {participant}
+              </li>
+            ))
+          ) : (
+            <p>Sem participantes</p>
+          )}
         </ul>
       </div>
 
@@ -59,10 +75,10 @@ const EventCard: React.FC<EventProps> = ({ title, startTime, endTime, location, 
   );
 };
 
-const EventList: React.FC<{ events: EventProps[] }> = ({ events }) => {
+const EventList: React.FC<{ events: EventProps[] }> = ({ event }) => {
   return (
     <div className={styles.listContainer}>
-      {events.map((event, index) => (
+      {event.map((event, index) => (
         <EventCard key={index} {...event} />
       ))}
     </div>
