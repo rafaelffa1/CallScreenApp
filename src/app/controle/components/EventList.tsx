@@ -77,10 +77,10 @@ const EventCard: React.FC<EventProps> = (event) => {
   );
 };
 
-const EventList: React.FC<{ events: EventProps[] }> = ({ event }) => {
+const EventList: React.FC<{ events: EventProps[] }> = ({ events }) => {
   return (
     <div className={styles.listContainer}>
-      {event.map((event, index) => (
+      {events.map((event, index) => (
         <EventCard key={index} {...event} />
       ))}
     </div>
