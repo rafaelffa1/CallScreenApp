@@ -75,7 +75,7 @@ export default function Home2() {
 
         <section className={styles.eventList}>
           {events.length > 0 ? (
-            <EventList event={events} />
+            <EventList events={events} />
           ) : (
             !loading && <p>🚫 Nenhum evento encontrado.</p>
           )}
