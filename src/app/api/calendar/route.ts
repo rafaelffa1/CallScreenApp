@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { Session } from "next-auth";
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");

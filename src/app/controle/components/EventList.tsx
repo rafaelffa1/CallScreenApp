@@ -8,26 +8,10 @@ import { useEffect } from "react";
 const socket = io("wss://websocket-server-odonto-production.up.railway.app");
 
 interface EventProps {
-  event: Object;
+  event: object;
 }
 
 const EventCard: React.FC<EventProps> = (event) => {
-
-  console.log("Evento recebido:", event); // 🔍 Log para depuração
-
-  if (!event) return <p>🚫 Nenhum evento disponível.</p>;
-
-  
-
-  const title = event?.summary || "Evento sem título";
-  const startTime = event?.start?.dateTime
-    ? new Date(event.start.dateTime).toLocaleString("pt-BR")
-    : "Data não definida";
-  const endTime = event?.end?.dateTime
-    ? new Date(event.end.dateTime).toLocaleString("pt-BR")
-    : "Data não definida";
-  const location = event?.location || "Local não informado";
-  const participants = Array.isArray(event?.attendees) ? event.attendees.map((attendee) => attendee.email) : [];
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -38,6 +22,19 @@ const EventCard: React.FC<EventProps> = (event) => {
       console.log("❌ Desconectado do WebSocket");
     });
   }, []);
+
+
+  if (!event) return <p>🚫 Nenhum evento disponível.</p>;
+
+  const title = event?.summary || "Evento sem título";
+  const startTime = event?.start?.dateTime
+    ? new Date(event.start.dateTime).toLocaleString("pt-BR")
+    : "Data não definida";
+  const endTime = event?.end?.dateTime
+    ? new Date(event.end.dateTime).toLocaleString("pt-BR")
+    : "Data não definida";
+  const location = event?.location || "Local não informado";
+  const participants = Array.isArray(event?.attendees) ? event.attendees.map((attendee) => attendee.email) : [];
 
   const sendAlert = () => {
     const nextPatient = participants[0]; // Pegamos o primeiro participante como próximo paciente

@@ -41,7 +41,7 @@ export default function Home() {
     <div className={styles.container}>
       {/* Logotipo */}
       <header className={styles.header}>
-        <img src="/logo.png" alt="Odonto Fácil" className={styles.logo} />
+        <Image src='/logo.png' alt="Logo" width={200} height={100} className={styles.logo} />
       </header>
 
       {/* Relógio no canto superior direito */}

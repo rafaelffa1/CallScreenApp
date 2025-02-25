@@ -1,7 +1,7 @@
 "use client";
 
 import EventList from "./components/EventList";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import styles from "./styles/Home.module.css";
@@ -33,10 +33,6 @@ export default function Home2() {
 
       const data = await response.json();
 
-      console.log('====================================');
-      console.log(data);
-      console.log('====================================');
-
       if (response.ok) {
         setEvents(data.items || []);
       } else {
@@ -44,7 +40,7 @@ export default function Home2() {
       }
     } catch (err) {
       setError("Erro ao buscar eventos");
-      alert(error)
+      alert(err)
     } finally {
       setLoading(false);
     }
