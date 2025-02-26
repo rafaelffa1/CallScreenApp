@@ -2,17 +2,14 @@
 import React from "react";
 import styles from "../styles/EventList.module.css";
 import { FaUser, FaBell } from "react-icons/fa";
-import { Socket  } from "socket.io-client";
+import { Socket } from "socket.io-client";
 
 interface EventProps {
-  event: {
-    id: string;
-    summary: string; // ✅ Adicionado para evitar o erro
-    start: { dateTime?: string }; // Data pode ser opcional
-    end: { dateTime?: string };
-    location?: string;
-    attendees?: { email: string }[];
-  }
+  summary: string; // ✅ Adicionado para evitar o erro
+  start: { dateTime?: string }; // Data pode ser opcional
+  end: { dateTime?: string };
+  location?: string;
+  attendees?: { email: string }[];
   socket?: Socket;
 }
 
@@ -21,18 +18,18 @@ interface EventListProps {
   socket?: Socket;
 }
 
-const EventCard: React.FC<EventProps> = ({ event, socket }) => {
+const EventCard: React.FC<EventProps> = ({ summary, start, end, location, attendees, socket }) => {
   if (!event) return <p>🚫 Nenhum evento disponível.</p>;
 
-  const title = event?.summary || "Evento sem título";
-  const startTime = event?.start?.dateTime
-    ? new Date(event.start.dateTime).toLocaleString("pt-BR")
+  const title = summary || "Evento sem título";
+  const startTime = start?.dateTime
+    ? new Date(start.dateTime).toLocaleString("pt-BR")
     : "Data não definida";
-  const endTime = event?.end?.dateTime
-    ? new Date(event.end.dateTime).toLocaleString("pt-BR")
+  const endTime = end?.dateTime
+    ? new Date(end.dateTime).toLocaleString("pt-BR")
     : "Data não definida";
-  const location = event?.location || "Local não informado";
-  const participants = Array.isArray(event?.attendees) ? event.attendees.map((attendee) => attendee.email) : [];
+  const locationParam = location || "Local não informado";
+  const participants = Array.isArray(attendees) ? attendees.map((attendee) => attendee.email) : [];
 
   const sendAlert = () => {
     const nextPatient = title; // Pegamos o primeiro participante como próximo paciente
@@ -47,7 +44,7 @@ const EventCard: React.FC<EventProps> = ({ event, socket }) => {
       <div className={styles.details}>
         <p>🗓 <strong>{title}</strong></p>
         <p>🕒 <strong>Início:</strong> {startTime} - <strong>Término:</strong> {endTime}</p>
-        <p>📍 <strong>Local:</strong> {location}</p>
+        <p>📍 <strong>Local:</strong> {locationParam}</p>
         <p>👥 <strong>Participantes:</strong></p>
         <ul className={styles.participantList}>
           {participants.length > 0 ? (
@@ -74,7 +71,7 @@ const EventList: React.FC<EventListProps> = ({ events, socket }) => {
   return (
     <div className={styles.listContainer}>
       {events.map((event, index) => (
-        <EventCard key={index} event={event} socket={socket} />
+        <EventCard key={index} {...event} socket={socket} />
       ))}
     </div>
   );

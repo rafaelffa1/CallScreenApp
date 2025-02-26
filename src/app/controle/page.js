@@ -20,17 +20,25 @@ export default function Home2() {
 
 
   useEffect(() => {
+    if (session) {
+      fetchCalendarEvents();
+    }
 
-    if(session) fetchCalendarEvents();
+    if (socket) {
+      socket.on("connect", () => {
+        console.log("✅ Conectado ao WebSocket Server com ID:", socket.id);
+      });
 
-    socket.on("connect", () => {
-      console.log("✅ Conectado ao WebSocket Server com ID:", socket.id);
-    });
+      socket.on("disconnect", () => {
+        console.log("❌ Desconectado do WebSocket");
+      });
 
-    socket.on("disconnect", () => {
-      console.log("❌ Desconectado do WebSocket");
-    });
-  }, []);
+      return () => {
+        socket.off("connect");
+        socket.off("disconnect");
+      };
+    }
+  }, [session, socket]);
 
   const fetchCalendarEvents = async () => {
     if (!session?.accessToken) {
