@@ -2,33 +2,26 @@
 import React from "react";
 import styles from "../styles/EventList.module.css";
 import { FaUser, FaBell } from "react-icons/fa";
-import { io } from "socket.io-client";
-import { useEffect } from "react";
-
-const socket = io("wss://websocket-server-odonto-production.up.railway.app");
+import { Socket  } from "socket.io-client";
 
 interface EventProps {
-  id: string;
-  summary: string; // ✅ Adicionado para evitar o erro
-  start: { dateTime?: string }; // Data pode ser opcional
-  end: { dateTime?: string };
-  location?: string;
-  attendees?: { email: string }[];
+  event: {
+    id: string;
+    summary: string; // ✅ Adicionado para evitar o erro
+    start: { dateTime?: string }; // Data pode ser opcional
+    end: { dateTime?: string };
+    location?: string;
+    attendees?: { email: string }[];
+  }
+  socket?: Socket;
 }
 
-const EventCard: React.FC<EventProps> = (event) => {
+interface EventListProps {
+  events: EventProps[];
+  socket?: Socket;
+}
 
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("✅ Conectado ao WebSocket Server com ID:", socket.id);
-    });
-
-    socket.on("disconnect", () => {
-      console.log("❌ Desconectado do WebSocket");
-    });
-  }, []);
-
-
+const EventCard: React.FC<EventProps> = ({ event, socket }) => {
   if (!event) return <p>🚫 Nenhum evento disponível.</p>;
 
   const title = event?.summary || "Evento sem título";
@@ -42,9 +35,9 @@ const EventCard: React.FC<EventProps> = (event) => {
   const participants = Array.isArray(event?.attendees) ? event.attendees.map((attendee) => attendee.email) : [];
 
   const sendAlert = () => {
-    const nextPatient = participants[0]; // Pegamos o primeiro participante como próximo paciente
+    const nextPatient = title; // Pegamos o primeiro participante como próximo paciente
     if (!nextPatient) return alert("Nenhum paciente disponível.");
-    socket.emit("alertNextPatient", { name: nextPatient });
+    socket?.emit("alertNextPatient", { name: nextPatient });
     alert(`📢 Alerta enviado: ${nextPatient} foi chamado!`);
   };
 
@@ -77,11 +70,11 @@ const EventCard: React.FC<EventProps> = (event) => {
   );
 };
 
-const EventList: React.FC<{ events: EventProps[] }> = ({ events }) => {
+const EventList: React.FC<EventListProps> = ({ events, socket }) => {
   return (
     <div className={styles.listContainer}>
       {events.map((event, index) => (
-        <EventCard key={index} {...event} />
+        <EventCard key={index} event={event} socket={socket} />
       ))}
     </div>
   );

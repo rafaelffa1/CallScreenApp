@@ -41,6 +41,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-bottom: 10;
   }
   
   .logoutButton {
@@ -124,3 +125,86 @@
     background: #d32f2f;
   }
   
+  /* Estilização do fundo escuro do modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Estilização da caixa do modal */
+.modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+  position: relative;
+}
+
+/* Título do modal */
+.modal h3 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #333;
+}
+
+/* Input de URL */
+.input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+/* Botões do modal */
+.modalButtons {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Botão de Enviar */
+.sendButton {
+  background: #28a745; /* Verde */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  flex: 1;
+  margin-right: 10px;
+  transition: 0.3s;
+}
+
+.sendButton:hover {
+  background: #218838;
+}
+
+/* Botão de Cancelar */
+.cancelButton {
+  background: #dc3545; /* Vermelho */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  flex: 1;
+  transition: 0.3s;
+}
+
+.cancelButton:hover {
+  background: #c82333;
+}

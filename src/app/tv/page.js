@@ -10,6 +10,7 @@ const socket = io("wss://websocket-server-odonto-production.up.railway.app");
 
 export default function Home() {
   const [nextPatient, setNextPatient] = useState()
+  const [videoUrl, setVideoUrl] = useState('')
 
   useEffect(() => {
     socket.on("newAlert", (data) => {
@@ -18,8 +19,13 @@ export default function Home() {
       delayedAction()
     });
 
+    socket.on("newVideo", (data) => {
+      setVideoUrl(data);
+    });
+
     return () => {
       socket.off("newAlert");
+      socket.off("newVideo");
     };
   }, []);
 
@@ -52,14 +58,20 @@ export default function Home() {
       {/* Vídeo */}
       <main className={styles.main}>
         <div className={styles.videoContainer}>
-          <iframe
-            src="https://www.youtube.com/embed/7RqbDiAQayk?autoplay=1&mute=1"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title="Vídeo de Atendimento"
-            className={styles.videoIframe}
-          ></iframe>
+          {
+            videoUrl ?
+              <iframe
+                src={`https://www.youtube.com/embed/${videoUrl}?autoplay=1&mute=1`}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Vídeo de Atendimento"
+                className={styles.videoIframe}
+              ></iframe>
+              :
+              <Image src='/logo.png' alt="Logo" width={300} height={500} className={styles.logo} />
+          }
+
         </div>
 
         {nextPatient && <div className={styles.banner}>🔔 {nextPatient}</div>}
