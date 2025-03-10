@@ -1,7 +1,7 @@
 "use client";
 
 import EventList from "./components/EventList";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import styles from "./styles/Home.module.css";
@@ -25,37 +25,7 @@ export default function Home2() {
   const [videoUrl, setVideoUrl] = useState("");
   const [roomCode, setRoomCode] = useState("");
 
-  useEffect(() => {
-    if (session) {
-      let hash_room = "";
-      fetchCalendarEvents();
-
-      if (getHashFromSession() === null) {
-        hash_room = GenerateRandomHash();
-        saveHashToSession(hash_room);
-        setRoomCode(hash_room);
-      }
-
-      if (socket) {
-        socket.on("connect", () => {
-          console.log("✅ Conectado ao WebSocket Server com ID:", socket.id);
-        });
-
-        socket.emit("joinRoom", hash_room);
-
-        socket.on("disconnect", () => {
-          console.log("❌ Desconectado do WebSocket");
-        });
-
-        return () => {
-          socket.off("connect");
-          socket.off("disconnect");
-        };
-      }
-    }
-  }, [session, socket]);
-
-  const fetchCalendarEvents = async () => {
+  const fetchCalendarEvents = useCallback(async () => {
     if (!session?.accessToken) {
       setError("Token não encontrado na sessão.");
       setLoading(false);
@@ -85,7 +55,37 @@ export default function Home2() {
     } finally {
       setLoading(false);
     }
-  };
+  });
+
+  useEffect(() => {
+    if (session) {
+      let hash_room = "";
+      fetchCalendarEvents();
+
+      if (getHashFromSession() === null) {
+        hash_room = GenerateRandomHash();
+        saveHashToSession(hash_room);
+        setRoomCode(hash_room);
+      }
+
+      if (socket) {
+        socket.on("connect", () => {
+          console.log("✅ Conectado ao WebSocket Server com ID:", socket.id);
+        });
+
+        socket.emit("joinRoom", hash_room);
+
+        socket.on("disconnect", () => {
+          console.log("❌ Desconectado do WebSocket");
+        });
+
+        return () => {
+          socket.off("connect");
+          socket.off("disconnect");
+        };
+      }
+    }
+  }, [session]);
 
   const sendVideoToTV = () => {
     if (!videoUrl.trim()) {

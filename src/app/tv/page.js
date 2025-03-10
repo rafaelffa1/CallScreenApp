@@ -1,6 +1,6 @@
 "use client";
-
-import { useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import { io } from "socket.io-client";
 import Clock from "./components/Clock";
 import styles from "./styles/tv.module.css";
@@ -11,6 +11,14 @@ const socket = io("wss://websocket-server-odonto-production.up.railway.app");
 const NUM_REPEAT_SPEAK = 3;
 
 export default function Home() {
+  return (
+    <Suspense fallback={<p>Carregando TV...</p>}>
+      <TVContent />
+    </Suspense>
+  );
+}
+
+function TVContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [roomCode, setRoomCode] = useState(
@@ -27,6 +35,17 @@ export default function Home() {
     }
   }, [roomCode]);
 
+  const speakText = useCallback((text) => {
+    for (let i = 0; i < NUM_REPEAT_SPEAK; i++) {
+      const speech = new SpeechSynthesisUtterance(text);
+      speech.lang = "pt-BR";
+      speech.rate = 0.7;
+      speech.pitch = 0.5;
+      window.speechSynthesis.speak(speech);
+    }
+    setTimeout(() => setNextPatient(""), 40000);
+  }, []);
+
   useEffect(() => {
     socket.on("newAlert", (data) => {
       setNextPatient(data.name);
@@ -41,35 +60,13 @@ export default function Home() {
       socket.off("newAlert");
       socket.off("newVideo");
     };
-  }, []);
+  }, [speakText]);
 
-  const delayedAction = () => {
-    setTimeout(() => {
-      setNextPatient("");
-    }, 40000);
-  };
-
-  const speakText = (text) => {
-    for (let i = 0; i < NUM_REPEAT_SPEAK; i++) {
-      console.log("to falando aqui");
-
-      const speech = new SpeechSynthesisUtterance(text);
-      speech.lang = "pt-BR";
-      speech.rate = 0.7;
-      speech.pitch = 0.5;
-      window.speechSynthesis.speak(speech);
-    }
-    delayedAction();
-  };
-
-  // Função para definir o código da sala e atualizar a URL
   const handleSetRoomCode = () => {
     if (roomCode.trim() === "") {
       alert("O código da sala é obrigatório!");
       return;
     }
-
-    // Atualiza a URL com o código da sala
     router.push(`?codigosala=${roomCode}`);
     setShowModal(false);
   };
